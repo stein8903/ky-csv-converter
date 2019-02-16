@@ -10,9 +10,9 @@
 		</form>
 		<form method="post" class="pull-right">
 			<select name="year">
-<?php for ($i=0; $i < count($year); $i++) :?>
-	<option value="<?php echo $year[$i];?>"><?php echo $year[$i];?></option>
-<?php endfor;?>
+<?php foreach ($year as $key => $value) :?>
+	<option value="<?php echo $value;?>"><?php echo $value;?></option>
+<?php endforeach;?>
 			</select>
 			<button class="button-primary">Excleをダウンロード</button>
 		</form>

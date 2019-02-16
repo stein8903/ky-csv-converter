@@ -115,7 +115,7 @@ class Kcc
 		global $wpdb;
 
 	    //DBのバージョン
-	    $kcc_db_version = '0.1';
+	    $kcc_db_version = '0.2';
 
 	    //現在のDBバージョン取得
 	    $installed_ver = get_option( 'kcc_version' );
@@ -459,10 +459,6 @@ dashicons-chart-line', 26);
 		//ダウンロード処理
 		if (isset($_POST["year"])) {
 			$year = $_POST["year"];
-			// $hoge = $this->download_spreadsheet($year);
-			// echo "<pre>";
-			// var_dump($hoge);
-			// echo "</pre>";
 			$this->mk_excel($year);
 			$url = content_url() . "/uploads/trgp.xlsx";
 			echo '<meta http-equiv="refresh" content="1;URL='.$url.'">';
@@ -492,7 +488,8 @@ dashicons-chart-line', 26);
 
 			$data_array[] = $year;
 		}
-		return $data_array;
+		$result = array_unique($data_array);
+		return $result;
 	}
 
 	function get_mt4ids(){
@@ -510,30 +507,10 @@ dashicons-chart-line', 26);
 		$members = $this->get_mt4ids();
 		foreach ($members as $key => $value) {
 			$sql = "SELECT name,mt4_id,lot,DATE_FORMAT(month, '%m') as month FROM $this->ms_tbl WHERE mt4_id=:mt4_id AND YEAR(month)=:year ORDER BY month ASC";
-			// $sql = "SELECT name,mt4_id,lot,DATE_FORMAT(month, '%m') as month FROM $this->ms_tbl WHERE mt4_id=:mt4_id ORDER BY month ASC";
 			$stmt = $this->pdo->prepare($sql);
 			$stmt->bindValue(":mt4_id", $value["mt4_id"], PDO::PARAM_INT);
 			$stmt->bindValue(":year", $year, PDO::PARAM_INT);
 			$stmt->execute();
-
-			// if($stmt->rowCount() != 0){
-			// 	$i = 0;
-			// 	// $data = [1=>"",2=>"",3=>"",4=>"",5=>"",6=>"",7=>"",8=>"",9=>"",10=>"",11=>"",12=>""];
-			// 	$data = [1=>"0.0",2=>"0.0",3=>"0.0",4=>"0.0",5=>"0.0",6=>"0.0",7=>"0.0",8=>"0.0",9=>"0.0",10=>"0.0",11=>"0.0",12=>"0.0"];
-			// 	while ($rows = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			// 		if ($i==0) {
-			// 			$basic_data = [
-			// 				"row"=>"=ROW()-1",
-			// 				"name"=>$value["name"],
-			// 				"mt4_id"=>$rows["mt4_id"]
-			// 			];
-			// 		}
-			// 		$data[(int)$rows["month"]] = $rows["lot"];
-			// 		$i++;
-			// 	}
-			// 	$basic_data += $data;
-			// 	$data_array[] = $basic_data;
-			// }
 
 			$i = 0;
 			$data = [1=>"0.0",2=>"0.0",3=>"0.0",4=>"0.0",5=>"0.0",6=>"0.0",7=>"0.0",8=>"0.0",9=>"0.0",10=>"0.0",11=>"0.0",12=>"0.0"];
@@ -556,10 +533,6 @@ dashicons-chart-line', 26);
 					"name"=>$value["name"],
 					"mt4_id"=>$value["mt4_id"]
 				];
-				// $data[1] = "123";
-				// for ($count=1; $count <= $data; $count++) { 
-				// 	$data[$count] = "0.0";
-				// }
 			}
 			$basic_data += $data;
 			$data_array[] = $basic_data;
@@ -676,10 +649,10 @@ dashicons-chart-line', 26);
 			$stmt->bindValue(":year", $year, PDO::PARAM_INT);
 			$stmt->execute();
 
+			$i = 0;
+			$data = [1=>"0.0",2=>"0.0",3=>"0.0",4=>"0.0",5=>"0.0",6=>"0.0",7=>"0.0",8=>"0.0",9=>"0.0",10=>"0.0",11=>"0.0",12=>"0.0"];
+			
 			if($stmt->rowCount() != 0){
-				$i = 0;
-				// $data = [1=>"",2=>"",3=>"",4=>"",5=>"",6=>"",7=>"",8=>"",9=>"",10=>"",11=>"",12=>""];
-				$data = [1=>"0.0",2=>"0.0",3=>"0.0",4=>"0.0",5=>"0.0",6=>"0.0",7=>"0.0",8=>"0.0",9=>"0.0",10=>"0.0",11=>"0.0",12=>"0.0"];
 				while ($rows = $stmt->fetch(PDO::FETCH_ASSOC)) {
 					if ($i==0) {
 						$basic_data = [
@@ -691,9 +664,15 @@ dashicons-chart-line', 26);
 					$data[(int)$rows["month"]] = $rows["lot"];
 					$i++;
 				}
-				$basic_data += $data;
-				$data_array[] = $basic_data;
+			}else{
+				$basic_data = [
+					"row"=>"=ROW()-1",
+					"name"=>$value["name"],
+					"mt4_id"=>$value["mt4_id"]
+				];
 			}
+			$basic_data += $data;
+			$data_array[] = $basic_data;
 		}
 		return $data_array;
 	}
@@ -807,10 +786,10 @@ dashicons-chart-line', 26);
 			$stmt->bindValue(":year", $year, PDO::PARAM_INT);
 			$stmt->execute();
 
+			$i = 0;
+			$data = [1=>"0.0",2=>"0.0",3=>"0.0",4=>"0.0",5=>"0.0",6=>"0.0",7=>"0.0",8=>"0.0",9=>"0.0",10=>"0.0",11=>"0.0",12=>"0.0"];
+			
 			if($stmt->rowCount() != 0){
-				$i = 0;
-				// $data = [1=>"",2=>"",3=>"",4=>"",5=>"",6=>"",7=>"",8=>"",9=>"",10=>"",11=>"",12=>""];
-				$data = [1=>"0.0",2=>"0.0",3=>"0.0",4=>"0.0",5=>"0.0",6=>"0.0",7=>"0.0",8=>"0.0",9=>"0.0",10=>"0.0",11=>"0.0",12=>"0.0"];
 				while ($rows = $stmt->fetch(PDO::FETCH_ASSOC)) {
 					if ($i==0) {
 						$basic_data = [
@@ -822,9 +801,15 @@ dashicons-chart-line', 26);
 					$data[(int)$rows["month"]] = $rows["lot"];
 					$i++;
 				}
-				$basic_data += $data;
-				$data_array[] = $basic_data;
+			}else{
+				$basic_data = [
+					"row"=>"=ROW()-1",
+					"name"=>$value["name"],
+					"mt4_id"=>$value["mt4_id"]
+				];
 			}
+			$basic_data += $data;
+			$data_array[] = $basic_data;
 		}
 		return $data_array;
 	}
@@ -936,10 +921,10 @@ dashicons-chart-line', 26);
 			$stmt->bindValue(":year", $year, PDO::PARAM_INT);
 			$stmt->execute();
 
+			$i = 0;
+			$data = [1=>"0.0",2=>"0.0",3=>"0.0",4=>"0.0",5=>"0.0",6=>"0.0",7=>"0.0",8=>"0.0",9=>"0.0",10=>"0.0",11=>"0.0",12=>"0.0"];
+			
 			if($stmt->rowCount() != 0){
-				$i = 0;
-				// $data = [1=>"",2=>"",3=>"",4=>"",5=>"",6=>"",7=>"",8=>"",9=>"",10=>"",11=>"",12=>""];
-				$data = [1=>"0.0",2=>"0.0",3=>"0.0",4=>"0.0",5=>"0.0",6=>"0.0",7=>"0.0",8=>"0.0",9=>"0.0",10=>"0.0",11=>"0.0",12=>"0.0"];
 				while ($rows = $stmt->fetch(PDO::FETCH_ASSOC)) {
 					if ($i==0) {
 						$basic_data = [
@@ -951,9 +936,15 @@ dashicons-chart-line', 26);
 					$data[(int)$rows["month"]] = $rows["lot"];
 					$i++;
 				}
-				$basic_data += $data;
-				$data_array[] = $basic_data;
+			}else{
+				$basic_data = [
+					"row"=>"=ROW()-1",
+					"name"=>$value["name"],
+					"mt4_id"=>$value["mt4_id"]
+				];
 			}
+			$basic_data += $data;
+			$data_array[] = $basic_data;
 		}
 		return $data_array;
 	}
